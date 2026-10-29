@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "creation": "2026-11-04 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_cloud",
+  "enabled",
+  "remote",
+  "remote_path",
+  "rclone_config",
+  "rclone_config_content",
+  "tenant",
+  "backup_every_hours",
+  "num_backups",
+  "email_recipients",
+  "email_subject",
+  "email_message",
+  "section_status",
+  "last_backup",
+  "last_upload",
+  "last_status",
+  "section_console",
+  "console_command",
+  "console_output"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_cloud",
+   "fieldtype": "Section Break",
+   "label": "Cloud Backup (rclone)"
+  },
+  {
+   "default": "1",
+   "description": "Run the full backup and upload automatically every day at 02:30.",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable Scheduled Backup"
+  },
+  {
+   "description": "Remote name as in rclone.conf, e.g. <code>onedrive</code> or <code>onedrive:Backups</code>.",
+   "fieldname": "remote",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "rclone Remote"
+  },
+  {
+   "description": "Folder inside the remote to write backups to, e.g. <code>ERPNextBackups</code>.",
+   "fieldname": "remote_path",
+   "fieldtype": "Data",
+   "label": "Destination Folder"
+  },
+  {
+   "description": "Leave blank to use the default (~/.config/rclone/rclone.conf).",
+   "fieldname": "rclone_config",
+   "fieldtype": "Data",
+   "label": "rclone Config Path"
+  },
+  {
+   "description": "Paste the full rclone.conf here (run <code>rclone config show</code> on the Odoo server). The app reads your OneDrive/SharePoint connection straight from it — no rclone install needed.",
+   "fieldname": "rclone_config_content",
+   "fieldtype": "Small Text",
+   "label": "Microsoft 365 Config (paste rclone.conf)"
+  },
+  {
+   "description": "Microsoft tenant for login. Leave blank for \"common\" (works for most setups).",
+   "fieldname": "tenant",
+   "fieldtype": "Data",
+   "label": "Tenant (optional)"
+  },
+  {
+   "default": "24",
+   "description": "Run an automatic backup every N hours (e.g. 24 = once a day, 12 = twice a day).",
+   "fieldname": "backup_every_hours",
+   "fieldtype": "Int",
+   "label": "Backup Every (hours)"
+  },
+  {
+   "default": "3",
+   "description": "Keep the latest N backup folders in the cloud; older folders are deleted. Each backup goes into its own timestamped folder.",
+   "fieldname": "num_backups",
+   "fieldtype": "Int",
+   "label": "Backup Slots (keep last N)"
+  },
+  {
+   "description": "Who to notify after every backup — email addresses or ERPNext user names, comma- or newline-separated (a user's email is taken from their User profile). Uses the site's outgoing email account.",
+   "fieldname": "email_recipients",
+   "fieldtype": "Small Text",
+   "label": "Email Recipients"
+  },
+  {
+   "default": "[{status}] ERPNext backup - {site} - {time}",
+   "description": "Email subject. Placeholders: {status}, {site}, {time}, {last_backup}, {last_upload}, {remote}.",
+   "fieldname": "email_subject",
+   "fieldtype": "Data",
+   "label": "Email Subject"
+  },
+  {
+   "default": "Site: {site}\nStatus: {status}\nLast backup: {last_backup}\nLast upload: {last_upload}\nRemote: {remote}",
+   "description": "Email body. Same placeholders as the subject.",
+   "fieldname": "email_message",
+   "fieldtype": "Small Text",
+   "label": "Email Message"
+  },
+  {
+   "fieldname": "section_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "last_backup",
+   "fieldtype": "Datetime",
+   "label": "Last Backup",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_upload",
+   "fieldtype": "Datetime",
+   "label": "Last Upload",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_status",
+   "fieldtype": "Small Text",
+   "label": "Last Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_console",
+   "fieldtype": "Section Break",
+   "label": "rclone Console"
+  },
+  {
+   "description": "Run a non-interactive rclone command against the configured remote, e.g. <code>listremotes</code>, <code>config show</code>, <code>lsd onedrive:</code>, <code>about onedrive:</code>.",
+   "fieldname": "console_command",
+   "fieldtype": "Code",
+   "label": "Command",
+   "options": "Shell"
+  },
+  {
+   "fieldname": "console_output",
+   "fieldtype": "Code",
+   "label": "Output",
+   "read_only": 1
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-11-04 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Cloud Backup",
+ "name": "Cloud Backup Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
