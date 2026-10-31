@@ -1,0 +1,11 @@
+{
+ "app": "cloud_backup",
+ "doctype": "Desktop Icon",
+ "icon": "download",
+ "icon_type": "App",
+ "label": "Cloud Backup",
+ "link_to": "Cloud Backup",
+ "link_type": "Workspace Sidebar",
+ "name": "Cloud Backup",
+ "standard": 1
+}

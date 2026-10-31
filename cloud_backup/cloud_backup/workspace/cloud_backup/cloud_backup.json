@@ -1,0 +1,17 @@
+{
+ "app": "cloud_backup",
+ "content": "[{\"id\": \"cb_h\", \"type\": \"header\", \"data\": {\"text\": \"<h4>Cloud Backup</h4>\", \"col\": 12}}, {\"id\": \"cb_p\", \"type\": \"paragraph\", \"data\": {\"text\": \"Full ERPNext backup (database + site files) to OneDrive / SharePoint via rclone. Configure the remote in <b>Cloud Backup Settings</b>.\", \"col\": 12}}]",
+ "creation": "2026-11-04 00:00:00.000000",
+ "doctype": "Workspace",
+ "for_user": "",
+ "icon": "download",
+ "label": "Cloud Backup",
+ "links": [],
+ "module": "Cloud Backup",
+ "name": "Cloud Backup",
+ "owner": "Administrator",
+ "public": 1,
+ "shortcuts": [],
+ "title": "Cloud Backup",
+ "type": "Workspace"
+}

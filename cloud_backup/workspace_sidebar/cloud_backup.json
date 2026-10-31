@@ -1,0 +1,25 @@
+{
+ "app": "cloud_backup",
+ "doctype": "Workspace Sidebar",
+ "header_icon": "download",
+ "items": [
+  {
+   "label": "Backup",
+   "type": "Section Break",
+   "icon": "download",
+   "link_type": "",
+   "indent": 1
+  },
+  {
+   "label": "Cloud Backup Settings",
+   "link_to": "Cloud Backup Settings",
+   "link_type": "DocType",
+   "type": "Link",
+   "indent": 0
+  }
+ ],
+ "module": "Cloud Backup",
+ "name": "Cloud Backup",
+ "standard": 1,
+ "title": "Cloud Backup"
+}
