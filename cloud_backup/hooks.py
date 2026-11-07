@@ -5,8 +5,8 @@ app_description = "Full ERPNext backup (database + site files) pushed to OneDriv
 app_license = "MIT"
 app_email = "jmsengi@sfgroup.co.tz"
 
-# Runs every hour; scheduled_backup only acts if "Enable Scheduled Backup" is
-# ticked AND the configured interval ("Backup Every N Hours") has elapsed.
+# Runs every hour; scheduled_backup only acts when "Backup Every (hours)" is > 0
+# AND the configured interval has elapsed since the last backup.
 scheduler_events = {
     "cron": {
         "0 * * * *": ["cloud_backup.api.scheduled_backup"],

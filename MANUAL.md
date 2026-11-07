@@ -105,15 +105,18 @@ Only needed if you can't reach the Odoo box or want a separate remote. Click-by-
    - **rclone Config (paste content)** → the block from step 3.
    - **rclone Remote** → the name in the brackets, e.g. `onedrive`.
    - **Destination Folder** → e.g. `ERPNextBackups` (the OneDrive folder that holds the backup sub-folders).
-   - **Backup Every (hours)** → how often the automatic backup runs, e.g. `24` (daily) or `12` (twice a day).
+   - **Backup Every (hours)** → how often the automatic backup runs, e.g. `24` (daily) or `12` (twice a day). Set `0` to turn automatic backup off (manual only).
    - **Backup Slots (keep last N)** → how many backup folders to keep, e.g. `3` (older ones are deleted automatically).
-   - **Email Recipients** → optional; comma-separated addresses to email after every backup (uses the site's outgoing email account).
+   - **Backup Contents** → tick which parts to include: database (SQL), public files, private files, site config, app code.
+   - **Send Email After Each Backup** → tick to email after every run.
+   - **Email Recipients** → addresses or ERPNext user names to email (uses the site's outgoing email account).
+   - **Email Subject / Message** → pre-filled template you can edit (placeholders `{status}`, `{site}`, `{time}`, `{last_backup}`, `{last_upload}`, `{remote}`, `{files}`).
 3. Click **Save**.
 4. Click **Test Connection** → should show `Connected: …`.
    - If it errors, open the Console and run `listremotes` then `config show` to see what's wrong.
 5. Click **Backup & Upload Now** → the app creates the full backup and uploads it.
    Check OneDrive for the `ERPNextBackups` folder with the `.sql.gz`, `.tar`, `.tar.gz` files.
-6. Tick **Enable Scheduled Backup** and **Save** → it now runs automatically every
+6. Set **Backup Every (hours)** (e.g. `24`) and **Save** → it now runs automatically every
    **Backup Every (hours)**, and each run goes into its own timestamped sub-folder under
    `ERPNextBackups` (e.g. `ERPNextBackups/20261104_023000/`), keeping only the latest
    **N** folders.

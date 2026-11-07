@@ -5,7 +5,6 @@
  "engine": "InnoDB",
  "field_order": [
   "section_cloud",
-  "enabled",
   "remote",
   "remote_path",
   "rclone_config",
@@ -13,6 +12,15 @@
   "tenant",
   "backup_every_hours",
   "num_backups",
+  "section_contents",
+  "include_database",
+  "include_files",
+  "include_private_files",
+  "column_contents",
+  "include_site_config",
+  "include_apps",
+  "section_email",
+  "enable_email",
   "email_recipients",
   "email_subject",
   "email_message",
@@ -28,79 +36,122 @@
   {
    "fieldname": "section_cloud",
    "fieldtype": "Section Break",
-   "label": "Cloud Backup (rclone)"
+   "label": "Cloud Backup"
   },
   {
-   "default": "1",
-   "description": "Run the full backup and upload automatically every day at 02:30.",
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Enable Scheduled Backup"
-  },
-  {
-   "description": "Remote name as in rclone.conf, e.g. <code>onedrive</code> or <code>onedrive:Backups</code>.",
    "fieldname": "remote",
    "fieldtype": "Data",
+   "label": "rclone Remote",
    "in_list_view": 1,
-   "label": "rclone Remote"
+   "description": "Remote name as in rclone.conf, e.g. <code>onedrive</code>."
   },
   {
-   "description": "Folder inside the remote to write backups to, e.g. <code>ERPNextBackups</code>.",
    "fieldname": "remote_path",
    "fieldtype": "Data",
-   "label": "Destination Folder"
+   "label": "Destination Folder",
+   "description": "Folder inside the remote to write backups to, e.g. <code>ERPNextBackups</code>."
   },
   {
-   "description": "Leave blank to use the default (~/.config/rclone/rclone.conf).",
    "fieldname": "rclone_config",
    "fieldtype": "Data",
-   "label": "rclone Config Path"
+   "label": "rclone Config Path",
+   "description": "Optional: path to a config file on the server (only for the rclone console)."
   },
   {
-   "description": "Paste the full rclone.conf here (run <code>rclone config show</code> on the Odoo server). The app reads your OneDrive/SharePoint connection straight from it — no rclone install needed.",
    "fieldname": "rclone_config_content",
    "fieldtype": "Small Text",
-   "label": "Microsoft 365 Config (paste rclone.conf)"
+   "label": "Microsoft 365 Config (paste rclone.conf)",
+   "description": "Paste the full rclone.conf here (run <code>rclone config show</code> on the Odoo server). The app reads your OneDrive/SharePoint connection straight from it \u2014 no rclone install needed."
   },
   {
-   "description": "Microsoft tenant for login. Leave blank for \"common\" (works for most setups).",
    "fieldname": "tenant",
    "fieldtype": "Data",
-   "label": "Tenant (optional)"
+   "label": "Tenant (optional)",
+   "description": "Microsoft tenant for login. Leave blank for \"common\" (works for most setups)."
   },
   {
-   "default": "24",
-   "description": "Run an automatic backup every N hours (e.g. 24 = once a day, 12 = twice a day).",
    "fieldname": "backup_every_hours",
    "fieldtype": "Int",
-   "label": "Backup Every (hours)"
+   "label": "Backup Every (hours)",
+   "default": "24",
+   "description": "Automatic backup interval. 0 = automatic backup off (manual only); 24 = daily; 12 = twice a day."
   },
   {
-   "default": "3",
-   "description": "Keep the latest N backup folders in the cloud; older folders are deleted. Each backup goes into its own timestamped folder.",
    "fieldname": "num_backups",
    "fieldtype": "Int",
-   "label": "Backup Slots (keep last N)"
+   "label": "Backup Slots (keep last N)",
+   "default": "3",
+   "description": "Keep the latest N backup folders in the cloud; older folders are deleted. Each backup goes into its own timestamped folder."
   },
   {
-   "description": "Who to notify after every backup — email addresses or ERPNext user names, comma- or newline-separated (a user's email is taken from their User profile). Uses the site's outgoing email account.",
+   "fieldname": "section_contents",
+   "fieldtype": "Section Break",
+   "label": "Backup Contents"
+  },
+  {
+   "fieldname": "include_database",
+   "fieldtype": "Check",
+   "label": "Database (SQL dump)",
+   "default": "1"
+  },
+  {
+   "fieldname": "include_files",
+   "fieldtype": "Check",
+   "label": "Public site files",
+   "default": "1"
+  },
+  {
+   "fieldname": "include_private_files",
+   "fieldtype": "Check",
+   "label": "Private files",
+   "default": "1"
+  },
+  {
+   "fieldname": "column_contents",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "include_site_config",
+   "fieldtype": "Check",
+   "label": "Site config",
+   "default": "1"
+  },
+  {
+   "fieldname": "include_apps",
+   "fieldtype": "Check",
+   "label": "App code (apps-src)",
+   "default": "1"
+  },
+  {
+   "fieldname": "section_email",
+   "fieldtype": "Section Break",
+   "label": "Email Notifications"
+  },
+  {
+   "fieldname": "enable_email",
+   "fieldtype": "Check",
+   "label": "Send Email After Each Backup",
+   "default": "1"
+  },
+  {
    "fieldname": "email_recipients",
    "fieldtype": "Small Text",
-   "label": "Email Recipients"
+   "label": "Email Recipients",
+   "description": "Who to notify \u2014 email addresses or ERPNext user names, comma- or newline-separated (a user's email is taken from their User profile). Uses the site's outgoing email account."
   },
   {
-   "default": "[{status}] ERPNext backup - {site} - {time}",
-   "description": "Email subject. Placeholders: {status}, {site}, {time}, {last_backup}, {last_upload}, {remote}.",
    "fieldname": "email_subject",
    "fieldtype": "Data",
-   "label": "Email Subject"
+   "label": "Email Subject",
+   "default": "[{status}] ERPNext backup - {site} - {time}",
+   "description": "Placeholders: {status}, {site}, {time}, {last_backup}, {last_upload}, {remote}, {files}."
   },
   {
-   "default": "Site: {site}\nStatus: {status}\nLast backup: {last_backup}\nLast upload: {last_upload}\nRemote: {remote}",
-   "description": "Email body. Same placeholders as the subject.",
    "fieldname": "email_message",
    "fieldtype": "Small Text",
-   "label": "Email Message"
+   "label": "Email Message",
+   "default": "ERPNext backup {status}.\n\nSite: {site}\nTime: {time}\nDestination: {remote}\nLast backup: {last_backup}\n\nFiles uploaded:\n{files}",
+   "description": "Placeholders: same as the subject. Leave as-is to use the default detailed message."
   },
   {
    "fieldname": "section_status",
@@ -128,14 +179,14 @@
   {
    "fieldname": "section_console",
    "fieldtype": "Section Break",
-   "label": "rclone Console"
+   "label": "rclone Console (optional)"
   },
   {
-   "description": "Run a non-interactive rclone command against the configured remote, e.g. <code>listremotes</code>, <code>config show</code>, <code>lsd onedrive:</code>, <code>about onedrive:</code>.",
    "fieldname": "console_command",
    "fieldtype": "Code",
    "label": "Command",
-   "options": "Shell"
+   "options": "Shell",
+   "description": "Optional rclone commands (only if rclone is installed on the server)."
   },
   {
    "fieldname": "console_output",

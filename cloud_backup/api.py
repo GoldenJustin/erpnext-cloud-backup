@@ -9,7 +9,7 @@ import tempfile
 
 import frappe
 import requests
-from frappe.utils import now_datetime
+from frappe.utils import get_datetime, now_datetime
 from frappe.utils.backups import backup
 
 GRAPH = "https://graph.microsoft.com/v1.0"
@@ -198,11 +198,13 @@ def run_backup_and_push():
     if not settings.rclone_config_content:
         frappe.throw("Paste your rclone.conf into 'rclone Config (paste content)' first")
     before = set(os.listdir(_backups_dir()))
+    files = []
     try:
-        backup(with_files=True)  # database dump + site files + private files
-        _backup_apps()  # custom app code (where present)
+        backup(with_files=True)  # database dump + site files + private files + config
+        if settings.include_apps:
+            _backup_apps()  # custom app code (where present)
         settings.last_backup = now_datetime()
-        _push(settings, before)
+        files = _push(settings, before)
         settings.last_upload = now_datetime()
         settings.last_status = "OK"
     except Exception:
@@ -212,21 +214,31 @@ def run_backup_and_push():
     finally:
         settings.save(ignore_permissions=True)
         frappe.db.commit()
-        _send_email(settings)
+        _send_email(settings, files)
     return "Backup and upload complete"
 
 
-def _push(settings, before):
-    files = _new_files(before)
-    if not files:
-        return
-    ts = None
+def _select_files(settings, files):
+    selected = []
     for f in files:
-        if "database.sql.gz" in f:
-            ts = f.split("-", 1)[0]
-            break
-    if not ts:
-        ts = now_datetime().strftime("%Y%m%d_%H%M%S")
+        if f.endswith("-database.sql.gz") and settings.include_database:
+            selected.append(f)
+        elif f.endswith(("-files.tar", "-files.tgz")) and settings.include_files:
+            selected.append(f)
+        elif f.endswith(("-private-files.tar", "-private-files.tgz")) and settings.include_private_files:
+            selected.append(f)
+        elif "site_config_backup" in f and settings.include_site_config:
+            selected.append(f)
+        elif f.endswith("-apps.tar.gz") and settings.include_apps:
+            selected.append(f)
+    return selected
+
+
+def _push(settings, before):
+    files = _select_files(settings, _new_files(before))
+    if not files:
+        return []
+    ts = files[0].split("-", 1)[0]
     conn = _conn(settings)
     token = _get_token(settings)
     root = _root(conn)
@@ -235,6 +247,7 @@ def _push(settings, before):
     for f in files:
         _upload(token, root, f"{folder}/{f}", os.path.join(_backups_dir(), f))
     _retain(token, root, base, int(settings.num_backups or 3))
+    return files
 
 
 def _retain(token, root, base, n):
@@ -277,8 +290,10 @@ def _resolve_recipients(settings):
     return [e for e in emails if e]
 
 
-def _send_email(settings):
+def _send_email(settings, files):
     """Notify recipients after each backup, using the site's outgoing email account."""
+    if not settings.enable_email:
+        return
     recipients = _resolve_recipients(settings)
     if not recipients:
         return
@@ -290,9 +305,10 @@ def _send_email(settings):
         "last_backup": str(settings.last_backup or ""),
         "last_upload": str(settings.last_upload or ""),
         "remote": settings.remote or "",
+        "files": "\n".join("- " + f for f in files) or "- (none)",
     }
     subject = _fill(settings.email_subject or "[{status}] ERPNext backup - {site} - {time}", ctx)
-    message = _fill(settings.email_message or "Site: {site}\nStatus: {status}", ctx)
+    message = _fill(settings.email_message or "ERPNext backup {status}. Site: {site}", ctx)
     try:
         frappe.sendmail(recipients=recipients, subject=subject, message=message)
     except Exception:
@@ -301,13 +317,12 @@ def _send_email(settings):
 
 def scheduled_backup():
     settings = frappe.get_single("Cloud Backup Settings")
-    if not settings.enabled:
+    hours = int(settings.backup_every_hours or 0)
+    if hours <= 0:
+        return  # automatic backup is off
+    last = get_datetime(settings.last_backup)
+    if last and (now_datetime() - last).total_seconds() < hours * 3600:
         return
-    last = settings.last_backup
-    if last:
-        hours = int(settings.backup_every_hours or 24)
-        if (now_datetime() - last).total_seconds() < hours * 3600:
-            return
     run_backup_and_push()
 
 
